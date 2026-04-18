@@ -1,6 +1,6 @@
 # 📱 react-native-adb-control
 
-Control Android devices via ADB from React Native apps. Perfect for device management dashboards, testing automation, or fleet control.
+TypeScript React Native library to control Android devices from your app.
 
 ## Install
 ```bash
@@ -8,21 +8,30 @@ npm install react-native-adb-control
 ```
 
 ## Usage
-```javascript
-import ADBControl from 'react-native-adb-control';
+```typescript
+import ADBClient from 'react-native-adb-control';
 
-const device = new ADBControl({ serial: '192.168.1.100:5555' });
+// Get device info
+const info = await ADBClient.getDeviceInfo();
+console.log(info.model, info.androidVersion);
 
-// Execute shell command
-const result = await device.shell('getprop ro.product.model');
-console.log(result); // "Samsung Galaxy S21"
+// List packages
+const apps = await ADBClient.listPackages(true); // user-only
 
 // Install APK
-await device.install('/path/to/app.apk');
+await ADBClient.installAPK('/path/to/app.apk', true);
+
+// Control screen
+await ADBClient.tap(540, 960);
+await ADBClient.swipe(540, 1500, 540, 500, 300);
 
 // Launch app
-await device.launch('com.example.app');
+await ADBClient.launch('com.example.app');
 
-// Take screenshot
-const screenshot = await device.screencap();
+// Listen for device events
+ADBClient.onDeviceConnected((serial) => {
+  console.log("Device connected:", serial);
+});
 ```
+
+Perfect for mobile testing automation, device administration, and ADB-driven tooling.
